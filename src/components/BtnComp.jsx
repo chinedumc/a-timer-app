@@ -1,58 +1,76 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Btn from "./Btn";
+import DisplayTime from "./DisplayTime";
 
 // Correct implementation
 const BtnComp = () => {
-  const [seconds, setSeconds] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const intervalRef = useRef(null);
+	const [seconds, setSeconds] = useState(0);
+	const [isRunning, setIsRunning] = useState(false);
+	const intervalRef = useRef(null);
 
-  const startTimer = () => {
-    setIsRunning(true);
-    intervalRef.current = setInterval(() => {
-      setSeconds((prev) => prev + 1);
-    }, 1000);
-    console.log("int1", intervalRef.current);
-  };
+	const startBtnRef = useRef(null);
 
-  const pauseTimer = () => {
-    setIsRunning(false);
-    console.log("int2", intervalRef.current);
-    clearInterval(intervalRef.current); // Actually stops the interval
-    console.log("int3", intervalRef.current);
-    // intervalRef.current = null;
-    console.log("int4", intervalRef.current);
-  };
+	const startTimer = () => {
+		setIsRunning(true);
+		intervalRef.current = setInterval(() => {
+			setSeconds((prev) => prev + 1);
+		}, 1000);
+		console.log("int1", intervalRef.current);
+	};
 
-  const resetTimer = () => {
-    clearInterval(intervalRef.current);
-    setSeconds(0);
-    setIsRunning(false);
-    intervalRef.current = null;
-  };
+	const pauseTimer = () => {
+		setIsRunning(false);
+		console.log("int2", intervalRef.current);
+		clearInterval(intervalRef.current); // Actually stops the interval
+		console.log("int3", intervalRef.current);
+		// intervalRef.current = null;
+		console.log("int4", intervalRef.current);
+	};
 
-  // Cleanup on unmount
-  // useEffect(() => {
-  //   return () => {
-  //     if (intervalRef.current) {
-  //       clearInterval(intervalRef.current);
-  //     }
-  //   };
-  // }, []);
+	const resetTimer = () => {
+		clearInterval(intervalRef.current);
+		setSeconds(0);
+		setIsRunning(false);
+		intervalRef.current = null;
+	};
 
-  return (
+	// Cleanup on unmount
+	// useEffect(() => {
+	//   return () => {
+	//     if (intervalRef.current) {
+	//       clearInterval(intervalRef.current);
+	//     }
+	//   };
+	// }, []);
+
+	useEffect(() => {
+		if (startBtnRef.current) {
+			startBtnRef.current.focus();
+		}
+	}, []);
+
+	return (
 		<div>
-			<p>{seconds}</p>
+			{/* <p>{seconds}</p> */}
+
+			<DisplayTime seconds={seconds} />
+
 			{/* <button onClick={isRunning ? pauseTimer : startTimer}>
 				{isRunning ? "Pause" : "Start"}
 			</button> */}
 
-			<Btn onClick={isRunning ? pauseTimer : startTimer}>
+			<Btn
+				ref={startBtnRef}
+				className="mt-3 bg-green-500 "
+				onClick={isRunning ? pauseTimer : startTimer}
+			>
 				{isRunning ? "Pause" : "Start"}
 			</Btn>
 
 			{/* <button onClick={resetTimer}>Reset</button> */}
-			<Btn onClick={resetTimer}>Reset</Btn>
+			<Btn className="mt-3 ml-1 bg-red-500" onClick={resetTimer}>
+				Reset
+			</Btn>
 		</div>
 	);
 };
